@@ -33,8 +33,8 @@ const Port = process.env.PORT;
 //     res.send('Hello signing in World')
 // });
 
-app.get('/signup', (req, res)=> {
-    res.send('Hello World signup')
-});
+// app.get('/signup', (req, res)=> {
+//     res.send('Hello World signup')
+// });
 
 app.listen(Port)

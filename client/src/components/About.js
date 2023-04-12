@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import profile from '../images/profile.jpg';
+import profile from '../images/user.png';
 
 const About = () => {
   const [log,setlog] = useState(false);
@@ -252,7 +252,7 @@ const About = () => {
   }
   return (<>{log ? <Rndr/>
     
-  : <h5>loading</h5> }</>)
+  : <h5>loading...</h5> }</>)
 
 }
 
