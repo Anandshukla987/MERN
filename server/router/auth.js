@@ -1,6 +1,8 @@
+const jwt = require('jsonwebtoken');
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const authenticate = require("../middleware/authentication");
 
 require('../db/conn');
 const User = require('../model/userSchema');
@@ -48,7 +50,7 @@ router.post('/register', async (req, res) => {
             return res.status(422).json({error:"Password mismatched"});
         }
 
-        user = new User({ name, email, phone, work, password, cpassword });
+        const user = new User({ name, email, phone, work, password, cpassword });
 
         await user.save();
 
@@ -66,12 +68,12 @@ router.post('/signin', async (req,res)=>{
         const {email, password} = req.body;
 
         if(!email || !password){
-            return res.status(400).json({error:"Plz Fill all fields"});
+            return res.status(406).json({error:"Plz Fill all fields"});
         }
 
         const userLogin = await User.findOne({email: email})
 
-        console.log(userLogin);
+        // console.log(userLogin);
 
         if(userLogin==null){
             res.status(400).json({error:"User not registered"});
@@ -81,12 +83,13 @@ router.post('/signin', async (req,res)=>{
 
             const token = await userLogin.generateAuthToken();
             res.cookie("jwtoken", token, {
-                expires: new Date(Date.now() + 258950000),
+                expires: new Date(Date.now() + 1200000),
                 httpOnly:true
             });
 
+
             if(!isMatch){
-                res.status(404).json({error:"Wrong Password"});
+                res.status(404).json({error:"Wrong credential"});
             }
             else{
                 res.status(200).json({error:"User successfully-signin"});
@@ -99,5 +102,32 @@ router.post('/signin', async (req,res)=>{
     }
 });
 
+router.get('/about', authenticate,  (req, res)=> {
+    res.send(req.rootUser);
+});
+
+router.post('/contact', authenticate, async (req, res)=> {
+    // res.send(req.rootUser);
+    const {name, email, phone, message} = req.body;
+    if(!name || !email || !phone || !message){
+        return res.json({error:"Please fill the form"})
+    }
+
+    const userContact = await User.findOne({_id:req.userId});
+    if(userContact){
+        const userMessage = await userContact.add_Message(name, email, phone, message);
+
+        await userContact.save();
+
+        res.status(201).json({message:"contact message successfully"});
+    }
+});
+
+// logout page
+router.get('/logout', (req, res)=> {
+    console.log("You are logged out");
+    res.clearCookie("jwtoken", {path:"/"}); //second parameter crealed the navigation history stack
+    res.status(200).send("you are logged out");
+});
 
 module.exports = router;

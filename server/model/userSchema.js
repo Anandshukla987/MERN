@@ -3,33 +3,57 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
-    name : {
+    name: {
         type: String,
         required: true
     },
-    email : {
+    email: {
         type: String,
         required: true
     },
-    phone : {
+    phone: {
         type: Number,
         required: true
     },
-    work : {
+    work: {
         type: String,
         required: true
     },
-    password : {
+    password: {
         type: String,
         required: true
     },
-    cpassword : {
+    cpassword: {
         type: String,
         required: true
     },
-    tokens : [
+    date: {
+        type: Date,
+        default: Date.now
+    },
+    messages: [
         {
-            token : {
+            name: {
+                type: String,
+                required: true
+            },
+            email: {
+                type: String,
+                required: true
+            },
+            phone: {
+                type: Number,
+                required: true
+            },
+            message: {
+                type: String,
+                required: true
+            }
+        }
+    ],
+    tokens: [
+        {
+            token: {
                 type: String,
                 required: true
             }
@@ -38,25 +62,37 @@ const userSchema = new mongoose.Schema({
 })
 
 
-userSchema.pre('save', async function(next){
-    if(this.isModified('password')){
+userSchema.pre('save', async function (next) {
+    if (this.isModified('password')) {
         this.password = await bcrypt.hash(this.password, 12);
         this.cpassword = await bcrypt.hash(this.cpassword, 12);
     }
     next();
 });
 
-userSchema.methods.generateAuthToken = async function(){
-    try{
-        const token = jwt.sign({_id:this._id}, process.env.secret_Key);
-        this.tokens = this.tokens.concat({token:token});
+userSchema.methods.generateAuthToken = async function () {
+    try {
+        const token = jwt.sign({ _id: this._id }, process.env.secret_Key);
+        this.tokens = this.tokens.concat({ token: token });
         await this.save();
         return token;
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 }
 
-const User = mongoose.model("USER",userSchema);
+// storing contact mssg
+userSchema.methods.add_Message = async function (name, email, phone, message) {
+    try{
+        this.messages = this.messages.concat({name, email, phone, message});
+        await this.save();
+        return this.messages;
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+const User = mongoose.model("USER", userSchema);
 
 module.exports = User;

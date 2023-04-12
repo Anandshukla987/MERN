@@ -1,8 +1,44 @@
-import React from 'react';
+import React,{useContext, useState} from 'react';
 import logo from '../images/logIn.jpg';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { userContext } from '../App';
 
 const Login = () => {
+
+    const [state, dispatch] = useContext(userContext);
+
+    const navigation = useNavigate();
+    const [email,setEmail] = useState("");
+    const [password,setPass] = useState("");
+    
+    const logIn = async (e) => {
+        e.preventDefault();
+
+        const res = await fetch("/signin", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email, password
+            })
+        });
+
+        const data = await res.json();
+        
+        if(res.status === 406 || !data || res.status === 400){
+            if(res.status === 400){ navigation("/signup"); }
+            window.alert("Invalid Credentioals");
+            console.log("Invalid Credentioals")
+        }
+        else{
+            dispatch({type: "USER", payload: true});
+            window.alert("User Logedin");
+
+            navigation("/");
+        }
+    }
+
     return (
         <div className='main-container'>
             <div className='login'>
@@ -15,24 +51,24 @@ const Login = () => {
                     </div>
                     <form className='login-form' id='login-form'>
                         <div className="input-box">
-                            <label for="name">
-                                <i className="zmdi zmdi-account"></i>
+                            <label htmlFor="email">
+                                <i className="zmdi zmdi-email"></i>
                             </label>
-                            <input type="text" id="name" name='name' placeholder='Enter Name' />
+                            <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} name='email' placeholder='Enter email' autoComplete='OFF' />
                         </div>
                         <div className="input-box">
-                            <label for="password"><i className="zmdi zmdi-lock"></i></label>
-                            <input type="password" id="password" name='password' placeholder='Enter Password' />
+                            <label htmlFor="password"><i className="zmdi zmdi-lock"></i></label>
+                            <input type="password" id="password" value={password} onChange={(e) => setPass(e.target.value)} name='password' placeholder='Enter Password' autoComplete='OFF' />
                         </div>
                         <div className='submit btn'>
-                            <input type='submit' id='submit' name='login' value='Log in' />
+                            <input type='submit' onClick={logIn} id='submit' name='login' value='Log in' />
                         </div>
                         <NavLink className='forgot-password' to='#' >Forgot Password</NavLink>
                         <div  className='login-option'>
                             <p>or login with</p>
-                            <i class="zmdi zmdi-facebook-box icon"></i>
-                            <i class="zmdi zmdi-twitter-box icon"></i>
-                            <i class="zmdi zmdi-google-plus-box icon"></i>
+                            <i className="zmdi zmdi-facebook-box icon"></i>
+                            <i className="zmdi zmdi-twitter-box icon"></i>
+                            <i className="zmdi zmdi-google-plus-box icon"></i>
                         </div>
                     </form>
                 </div>
