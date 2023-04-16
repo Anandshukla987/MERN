@@ -5,18 +5,28 @@ import { NavLink } from 'react-router-dom';
 import { userContext } from '../App';
 
 const Navbar = () => {
-    const [state, dispatch] = useContext(userContext);
+    const { state, dispatch } = useContext(userContext);
 
-    const renderMenu = async () => {
+    const callAboutPage = async () => {
         try {
             const res = await fetch('/about', {
                 method: "GET",
                 headers: {
+                    Accept: "application/json",
                     "Content-Type": "application/json"
                 },
+                credentials: "include"
             });
 
-            await res.json();
+            const data = await res.json();
+
+            if (!res.status === 200) {
+                const error = new Error(res.error);
+                throw error;
+            }
+            else {
+                dispatch({type: "USER", payload: true});
+            }
 
         } catch (err) {
             console.log(err);
@@ -24,7 +34,7 @@ const Navbar = () => {
     }
 
     useEffect(() => {
-        renderMenu();
+        callAboutPage();
     }, []);
 
     const NavBtn = () => {

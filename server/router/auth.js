@@ -126,8 +126,40 @@ router.post('/contact', authenticate, async (req, res)=> {
 // logout page
 router.get('/logout', (req, res)=> {
     console.log("You are logged out");
-    res.clearCookie("jwtoken", {path:"/"}); //second parameter crealed the navigation history stack
+    res.clearCookie("jwtoken", {path:"/"}); 
     res.status(200).send("you are logged out");
+});
+
+// edit about
+router.post('/editAbout', authenticate, async (req, res)=> {
+    const {password} = req.body;
+    const verifiedUser = await User.findOne({_id: req.userId});
+
+    const isMatch = await bcrypt.compare(password,verifiedUser.password);
+
+    if(!isMatch){
+        res.status(401).json({error:"Wrong credential"});
+    }
+    else{
+        res.status(200).json({message:"User successfull"});
+    }
+});
+
+router.post('/editSave', authenticate, async (req,res)=>{
+    try{const {name, phone, work} = req.body;
+    const obj = await User.updateOne({ _id:req.userId }, {
+        $set: {
+            name: name,
+            phone: phone,
+            work: work
+        }
+    });
+
+    res.status(200).json({message:"Update successfully"});
+
+  }catch(err){
+    console.log(err);
+  }
 });
 
 module.exports = router;

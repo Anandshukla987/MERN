@@ -9,6 +9,7 @@ import Signup from "./components/Signup";
 import Error from "./components/Error";
 import Logout from "./components/Logout";
 // eslint-disable-line no-unused-vars
+import EditAbout from "./components/EditAbout";
 import { initialState, reducer } from './components/Reducer/useReducer';
 
 export const userContext = createContext();
@@ -30,6 +31,8 @@ const Routing = () => {
 
         <Route path="/logout" element={<Logout />} />
 
+        <Route path="/editAbout" element={<EditAbout />} />
+
         <Route path="*" element={<Error />} />
       </Routes>
 
@@ -43,7 +46,7 @@ const App = () => {
 
   return (
     <>
-      <userContext.Provider value={[state, dispatch]}>
+      <userContext.Provider value={{state, dispatch}}>
         <Navbar />
         <Routing />
       </userContext.Provider>

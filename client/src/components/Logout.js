@@ -4,7 +4,7 @@ import { userContext } from '../App';
 
 const Logout = () => {
 
-    const [state, dispatch] = useContext(userContext);
+    const {state, dispatch} = useContext(userContext);
 
     const navigation = useNavigate();
     useEffect( () => {
@@ -17,7 +17,7 @@ const Logout = () => {
             credentials: "include"
         }).then(res => {
             dispatch({type: "USER" , payload: false});
-            navigation("/login", {replace: true});
+            navigation("/login", {replace: true});//second parameter crealed the navigation history stack
             if(res.status !== 200){
                 const error = new Error(res.error);
                 throw error;

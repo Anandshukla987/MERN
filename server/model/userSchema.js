@@ -83,15 +83,16 @@ userSchema.methods.generateAuthToken = async function () {
 
 // storing contact mssg
 userSchema.methods.add_Message = async function (name, email, phone, message) {
-    try{
-        this.messages = this.messages.concat({name, email, phone, message});
+    try {
+        this.messages = this.messages.concat({ name, email, phone, message });
         await this.save();
         return this.messages;
     }
-    catch(err){
+    catch (err) {
         console.log(err)
     }
 }
+
 
 const User = mongoose.model("USER", userSchema);
 
