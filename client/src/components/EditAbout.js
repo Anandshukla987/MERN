@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import userprofile from '../images/user.png';
+import toBase64  from '../base64/base64';
 
 const EditAbout = () => {
     const navigation = useNavigate();
@@ -72,14 +73,14 @@ const EditAbout = () => {
     };
 
     const save = async () => {
-        const {name, phone, work} = userData;
+        const {name, phone, work, userImg} = userData;
         const res = await fetch("/editSave", {
             method:'POST',
             headers:{
                 "Content-Type":"application/json"
             },
             body: JSON.stringify({
-                name, work, phone
+                name, work, phone, userImg
             })
         });
         await res.json();
@@ -91,6 +92,19 @@ const EditAbout = () => {
             console.log("Not Updated!")
         }
     }
+
+    const handleDP = ()=>{
+        document.querySelector('#profileImg').click();
+    }
+
+    const [userImg, setImg]=useState();
+    
+    const handleProfileImg =async (e)=>{
+        name=e.target.name;
+        value=e.target.files[0];
+        setUserData({ ...userData, [name]: await toBase64(value) });
+    }
+    
 
 
     return (
@@ -104,9 +118,11 @@ const EditAbout = () => {
                                     <div className="row g-0">
                                         <div className="col-md-4 gradient-custom text-center text-white"
                                             style={{ borderTopLeftRadius: ".5rem", borderBottomLeftRadius: ".5rem" }}>
-                                            <img src={userprofile}
-                                                alt="Avatar" className="img-fluid my-5" style={{ width: "80px" }} />
-    
+                                            <img src={userData.userImg}
+                                                alt="Avatar" className="img-fluid my-5" style={{ width: "80px" }} 
+                                                onClick={handleDP}/>
+                                            <input type='file' className='hide' id='profileImg' onChange={handleProfileImg}
+                                            name='userImg'/>
                                             <div className="input-box">
                                                 <input type="text" id="name" name="name" value={userData.name}
                                                     onChange={editHandler} />
@@ -164,7 +180,7 @@ const EditAbout = () => {
                                     <div className="row g-0">
                                         <div className="col-md-4 gradient-custom text-center text-white"
                                             style={{ borderTopLeftRadius: ".5rem", borderBottomLeftRadius: ".5rem" }}>
-                                            <img src={userprofile}
+                                            <img src={userData.userImg || userprofile}
                                                 alt="Avatar" className="img-fluid my-5" style={{ width: "80px" }} />
                                             <h5>{userData.name}</h5>
                                             <p>{userData.work}</p>

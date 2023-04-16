@@ -146,12 +146,13 @@ router.post('/editAbout', authenticate, async (req, res)=> {
 });
 
 router.post('/editSave', authenticate, async (req,res)=>{
-    try{const {name, phone, work} = req.body;
+    try{const {name, phone, work, userImg} = req.body;
     const obj = await User.updateOne({ _id:req.userId }, {
         $set: {
             name: name,
             phone: phone,
-            work: work
+            work: work,
+            userImg: userImg
         }
     });
 

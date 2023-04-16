@@ -49,7 +49,7 @@ const About = () => {
                   <div className="row g-0">
                     <div className="col-md-4 gradient-custom text-center text-white"
                       style={{ borderTopLeftRadius: ".5rem", borderBottomLeftRadius: ".5rem" }}>
-                      <img src={userprofile}
+                      <img src={userData.userImg || userprofile}
                         alt="Avatar" className="img-fluid my-5" style={{ width: "80px" }} />
                       <h5>{userData.name}</h5>
                       <p>{userData.work}</p>
