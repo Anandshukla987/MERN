@@ -7,9 +7,9 @@ const authenticate = require("../middleware/authentication");
 require('../db/conn');
 const User = require('../model/userSchema');
 
-router.get('/', (req, res) => {
-    res.send("Hello world from router");
-})
+// router.get('/', (req, res) => {
+//     res.send("Hello world from router");
+// })
 
 // router.post('/register', (req, res) => {
 //     const { name, email, phone, work, password, cpassword } = req.body;
@@ -134,8 +134,9 @@ router.get('/logout', (req, res)=> {
 router.post('/editAbout', authenticate, async (req, res)=> {
     const {password} = req.body;
     const verifiedUser = await User.findOne({_id: req.userId});
-
-    const isMatch = await bcrypt.compare(password,verifiedUser.password);
+    
+    const isMatch = await bcrypt.compare(password, verifiedUser.password);
+    // console.log(isMatch);
 
     if(!isMatch){
         res.status(401).json({error:"Wrong credential"});
